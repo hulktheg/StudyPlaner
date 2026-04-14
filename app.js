@@ -1458,3 +1458,57 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* ----------------------------------------------------------------
+   Test exports – no-op in browsers; tree-shakeable in any bundler.
+---------------------------------------------------------------- */
+if (typeof module !== 'undefined') {
+  module.exports = {
+    // Pure utility functions
+    escapeHtml,
+    dateOnly,
+    addDays,
+    daysUntil,
+    dueBadgeLabel,
+    formatDate,
+    getUrgency,
+    priorityLabel,
+    // Stats / week helpers
+    getWeekRange,
+    // Constants
+    DEFAULT_SETTINGS,
+    SUBJECT_COLORS,
+    // State management
+    saveState,
+    loadState,
+    getState:  () => state,
+    setState:  (patch) => { state = { ...state, ...patch }; },
+    // Task & subject helpers
+    getFilteredTasks,
+    getSubject,
+    // Timetable helpers
+    getTimetableData,
+    getActiveDays,
+    getActiveFullDays,
+    getTodayColIndex,
+    renderTimetable,
+    // Render helpers
+    renderTaskList,
+    renderDeadlines,
+    renderSubjectOverview,
+    renderMiniCalendar,
+    renderPomodoro,
+    updateProgress,
+    updateOverdueBadge,
+    renderAll,
+    renderStats,
+    // Pomodoro helpers
+    resetPomodoro,
+    switchPomMode,
+    togglePomodoro,
+    deleteTask,
+    getPomState: () => pomState,
+    // Initialisation
+    init,
+  };
+}
