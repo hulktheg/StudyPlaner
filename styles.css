@@ -973,7 +973,7 @@ textarea.input-field { resize: vertical; min-height: 70px; }
   gap: 16px;
 }
 
-.deadline-section {}
+
 
 .deadline-heading {
   font-size: 0.8rem;
@@ -1296,6 +1296,12 @@ textarea.input-field { resize: vertical; min-height: 70px; }
 .form-hint {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.form-error {
+  font-size: 0.78rem;
+  color: var(--danger-dark);
+  font-weight: 600;
 }
 
 .form-check .check-label {

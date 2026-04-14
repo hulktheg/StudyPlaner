@@ -15,7 +15,6 @@ const SUBJECT_COLORS = [
   '#e53e3e', '#805ad5', '#d69e2e', '#3182ce', '#319795',
   '#f6ad55', '#68d391', '#76e4f7', '#b794f4', '#fc8181'
 ];
-const WEEKDAY_JS_TO_IDX = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5 }; // JS getDay → col index
 
 /* ----------------------------------------------------------------
    Default State
@@ -496,6 +495,8 @@ function openAddTaskModal() {
   state.editingTaskId = null;
   $('modalTitle').textContent = 'Neue Aufgabe';
   $('taskForm').reset();
+  $('taskDesc').removeAttribute('aria-invalid');
+  $('taskDescError').hidden = true;
   updateSubjectSelects();
   $('taskDeadline').value = new Date().toISOString().split('T')[0];
   $('taskNotes').value = '';
@@ -509,6 +510,8 @@ function openEditTaskModal(taskId) {
   if (!task) return;
   state.editingTaskId = taskId;
   $('modalTitle').textContent = 'Aufgabe bearbeiten';
+  $('taskDesc').removeAttribute('aria-invalid');
+  $('taskDescError').hidden = true;
   updateSubjectSelects();
   $('taskSubject').value  = task.subjectId || '';
   $('taskDesc').value     = task.desc;
@@ -530,7 +533,14 @@ $('taskForm').addEventListener('submit', e => {
   const notes     = $('taskNotes').value.trim();
   const deadline  = $('taskDeadline').value;
   const priority  = document.querySelector('input[name="priority"]:checked')?.value || 'medium';
-  if (!desc) { $('taskDesc').focus(); return; }
+  if (!desc) {
+    $('taskDesc').setAttribute('aria-invalid', 'true');
+    $('taskDescError').hidden = false;
+    $('taskDesc').focus();
+    return;
+  }
+  $('taskDesc').setAttribute('aria-invalid', 'false');
+  $('taskDescError').hidden = true;
 
   if (state.editingTaskId) {
     const task = state.tasks.find(t => t.id === state.editingTaskId);
@@ -1020,9 +1030,22 @@ function drawStatsChart(thisCount, lastCount) {
 
   const drawBar = (x, count, color, label) => {
     const bh = Math.max(4, Math.round((count / max) * maxH));
-    ctx.fillStyle = color;
+    // Draw rounded rect with fallback for older browsers
     ctx.beginPath();
-    ctx.roundRect ? ctx.roundRect(x, H - 20 - bh, barW, bh, 4) : ctx.rect(x, H - 20 - bh, barW, bh);
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(x, H - 20 - bh, barW, bh, 4);
+    } else {
+      const r = Math.min(4, bh / 2, barW / 2);
+      const lx = x, ly = H - 20 - bh, lw = barW, lh = bh;
+      ctx.moveTo(lx + r, ly);
+      ctx.lineTo(lx + lw - r, ly);
+      ctx.arcTo(lx + lw, ly, lx + lw, ly + r, r);
+      ctx.lineTo(lx + lw, ly + lh);
+      ctx.lineTo(lx, ly + lh);
+      ctx.lineTo(lx, ly + r);
+      ctx.arcTo(lx, ly, lx + r, ly, r);
+      ctx.closePath();
+    }
     ctx.fill();
     ctx.fillStyle = textColor;
     ctx.font = '12px Inter, sans-serif';

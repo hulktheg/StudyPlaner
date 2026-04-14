@@ -344,7 +344,8 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="taskDesc">Beschreibung *</label>
-          <textarea class="input-field" id="taskDesc" placeholder="Was muss gemacht werden?" rows="3" required aria-required="true"></textarea>
+          <textarea class="input-field" id="taskDesc" placeholder="Was muss gemacht werden?" rows="3" required aria-required="true" aria-describedby="taskDescError"></textarea>
+          <span class="form-error" id="taskDescError" role="alert" hidden>Bitte eine Beschreibung eingeben.</span>
         </div>
         <div class="form-group">
           <label class="form-label" for="taskNotes">Notizen</label>
